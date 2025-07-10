@@ -1,0 +1,81 @@
+#include <iostream>
+#include <ctype.h> // for isalnum
+using namespace std;
+
+#define SIZE 100
+char stack[SIZE];
+int top = -1;
+
+void push(char c) {
+    top++;
+    stack[top] = c;
+}
+
+char pop() {
+    char c = stack[top];
+    top--;
+    return c;
+}
+
+int precedence(char c) {
+    if (c == '^')
+        return 3;
+    else if (c == '*' || c == '/')
+        return 2;
+    else if (c == '+' || c == '-')
+        return 1;
+    else
+        return 0;
+}
+
+void infixToPostFix(char infix[], char postfix[]) {
+    int i = 0, j = 0;
+    while (infix[i] != '\0') {
+        char ch = infix[i];
+        
+        if (isalnum(ch)) {
+            // Case 1: Operand, add to postfix
+            postfix[j++] = ch;
+        }
+        else if (ch == '(') {
+            // Case 2: '(' push to stack
+            push(ch);
+        }
+        else if (ch == ')') {
+            // Case 3: Pop until '('
+            while (top != -1 && stack[top] != '(') {
+                postfix[j++] = pop();
+            }
+            if (top != -1 && stack[top] == '(') {
+                pop(); // Remove '(' from stack
+            }
+        }
+        else {
+            // Case 4: Operator
+            while (top != -1 && precedence(stack[top]) >= precedence(ch)) {
+                postfix[j++] = pop();
+            }
+            push(ch);
+        }
+        i++;
+    }
+    // Pop all remaining operators
+    while (top != -1) {
+        postfix[j++] = pop();
+    }
+    postfix[j] = '\0';  // Null-terminate postfix string
+}
+
+int main() {
+    char infix[SIZE], postfix[SIZE];
+    cout << "Enter the infix expression: ";
+    cin >> infix;
+    infixToPostFix(infix, postfix);
+    cout << "Postfix expression: " << postfix << endl;
+    return 0;
+}
+
+
+
+output: Enter the infix expression: (a+b)*(c+d)
+Postfix expression: ab+cd+*
