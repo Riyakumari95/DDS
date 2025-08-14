@@ -1,0 +1,40 @@
+#include<iostream>
+using namespace std;
+
+// Function prototype for interpolationSearch
+int interpolationSearch(int arr[], int n, int key);
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int value = 40;
+    
+    int index = interpolationSearch(arr, size, value);
+    
+    if (index == -1) {
+        cout << "Not found" << endl;
+    } else {
+        cout << "Found at index " << index << endl;
+    }
+}
+
+// Function to perform interpolation search
+int interpolationSearch(int arr[], int n, int key) {
+    int low = 0, high = n - 1;
+    
+    while (low <= high && key >= arr[low] && key <= arr[high]) {
+        // Calculate position
+        int pos = low + ((key - arr[low]) * (high - low)) / (arr[high] - arr[low]);
+        
+        if (arr[pos] == key)
+            return pos;
+        else if (arr[pos] < key)
+            low = pos + 1;
+        else
+            high = pos - 1;
+    }
+    
+    return -1;
+}
+
+OUTPUT : Found at index 3
